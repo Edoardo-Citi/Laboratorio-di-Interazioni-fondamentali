@@ -37,14 +37,13 @@ Double_t beta_s = 0.5 * C;
 //Lunghezze lastra sopra
 Double_t Ux = 2.79;
 Double_t Uy = 0.04;
-//Altezza rispetto alla lastra bassa
+//Altezza della lastra alta rispetto alla lastra bassa
 Double_t Zu = 1.75;
 
 //Lunghezze lastra sotto
 Double_t Dx = 0.23;
 Double_t Dy = 0.14;
-//Altezza rispetto alla lastra bassa
-Double_t Zd = 0;
+
 
 //Posizione del centro della lastra sotto rispetto a quella sopra
 Double_t Dcx = 1.40;
@@ -56,7 +55,7 @@ Double_t M_mu = 0.105;
 
 //Intervallo di energia della simulazione in GeV
 Double_t Emin = M_mu;
-Double_t Emax = 1 ; 
+Double_t Emax = M_mu + 0.1 ; 
 
 
 //Variabile per simulare la lettura del primo TAC
@@ -81,6 +80,11 @@ void Montecarlo_general(){
 	//Variabile di un evento andato a segno
 	Double_t E=0, beta_mu=0, Ts=0, Td=0, Vs=0, Vd=0;
 	
+	//Apro il file su cui salvare
+	char* filename= "Montecarlo.txt";
+	ofstream fout(filename);
+	if ( ! fout ) { cerr << " can't open input - " << filename <<endl; return 1; }
+	fout.precision(3);
 	
 	//Ciclo di generazione
 	for (i=0; i<N; i++){
@@ -108,9 +112,12 @@ void Montecarlo_general(){
 			
 			Vd = Rx -> Gaus(a2 * Td + c2,s2);
 			
+			// Stampo le variabili generate e la velcità reale
+			fout << "Vs=" << Vs << '\t' << "Vd=" << Vd << '\t' << "Beta=" << beta_mu << endl;
 		}
 		else {Missed ++;}
 	}
+	fout.close();
 }
 
 
