@@ -31,7 +31,7 @@ TRandom3* Rx = new TRandom3(23);
 Double_t C = 299792458.0 ;
 //Dimensioni fisichedel sistema
 //Velocità di propagazione della luce nella sbarra
-Double_t beta_s = 0.9 * C;
+Double_t beta_s = 0.5 * C;
 
 //Lunghezze in metri
 //Lunghezze lastra sopra
@@ -56,11 +56,14 @@ Double_t M_mu = 0.105;
 
 //Intervallo di energia della simulazione in GeV
 Double_t Emin = M_mu;
-Double_t Emax = 10 ; 
+Double_t Emax = 1 ; 
 
 
 //Variabile per simulare la lettura del primo TAC
 Double_t a1=0.0228*1e9, c1=-0.35, s1=0.05, delay1= 30.5 * 1e-9;
+
+//Variabile per simulare la lettura del secondo TAC
+Double_t a2=0.0228*1e9, c2=-0.35, s2=0.05, delay2= 30.5 * 1e-9;
 
 
 void Montecarlo_general(){
@@ -76,7 +79,7 @@ void Montecarlo_general(){
 	//Variabili dell'evento
 	Double_t Xu=0, Yu=0, Xd=0, Yd=0, C_Theta=0, Phi=0;
 	//Variabile di un evento andato a segno
-	Double_t E=0, beta_mu=0, Ts=0, Td=0, Vs;
+	Double_t E=0, beta_mu=0, Ts=0, Td=0, Vs=0, Vd=0;
 	
 	
 	//Ciclo di generazione
@@ -94,16 +97,20 @@ void Montecarlo_general(){
 		if(Dcx - Dx/2 <= Xd && Xd<= Dcx + Dx/2 && Dcy - Dy/2 <= Yd && Yd <= Dcy + Dy/2){
 			//Genero l'energia e la velocità
 			E = (Rx -> Rndm()) *( Emax - Emin) + Emin;
-			beta_mu = sqrt (1 - pow(M_mu/E, 2.0));
+			beta_mu = sqrt (1 - pow(M_mu/E, 2.0)) * C;
 			
-			//Genero i tempi in lettura
-			Ts = (Ux - 2 * 1)/beta_s + delay1;
+			//Genero i tempi in lettura nella barra
+			Ts = (Ux - 2 * Xu)/beta_s + delay1;
 			Vs = Rx -> Gaus(a1 * Ts + c1,s1);
-			histo -> Fill(Vs);
+			
+			//Genero i TOF
+			Td = sqrt(pow(Zu,2.0) + pow( Xu-Xd, 2.0) + pow( Yu-Yd, 2.0))/beta_mu + delay2;
+			
+			Vd = Rx -> Gaus(a2 * Td + c2,s2);
+			
 		}
 		else {Missed ++;}
 	}
-	histo -> Draw();
 }
 
 
