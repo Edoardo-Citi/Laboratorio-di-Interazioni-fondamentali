@@ -72,7 +72,7 @@ void Montecarlo_general(){
 	unsigned Missed =0;
 	
 	
-	histo = new TH1F("histo", "histo", 2500, 0, 2.5);
+	//histo = new TH1F("histo", "histo", 2500, 0, 2.5);
 	
 	
 	//Variabili dell'evento
@@ -96,8 +96,8 @@ void Montecarlo_general(){
 		Phi = (Rx -> Rndm()) * 2 * (TMath::Pi());
 		
 		//Calcolo posizione finale
-		Xd = Xu - Zu * TMath::Cos(Phi) * sqrt(1 - pow(C_Theta, 2.0)/C_Theta);
-		Yd = Yu - Zu * TMath::Sin(Phi) * sqrt(1 - pow(C_Theta, 2.0)/C_Theta);
+		Xd = Xu - Zu * TMath::Cos(Phi) * sqrt(1 - pow(C_Theta, 2.0))/C_Theta;
+		Yd = Yu - Zu * TMath::Sin(Phi) * sqrt(1 - pow(C_Theta, 2.0))/C_Theta;
 		if(Dcx - Dx/2 <= Xd && Xd<= Dcx + Dx/2 && Dcy - Dy/2 <= Yd && Yd <= Dcy + Dy/2){
 			//Genero l'energia e la velocità
 			E = (Rx -> Rndm()) *( Emax - Emin) + Emin;
