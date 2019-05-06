@@ -31,7 +31,7 @@ TRandom3* Rx = new TRandom3(23);
 Double_t C = 299792458.0 ;
 //Dimensioni fisichedel sistema
 //Velocità di propagazione della luce nella sbarra
-Double_t beta_s = 0.5 * C;
+Double_t beta_s = 0.4697 * C;
 
 //Lunghezze in metri
 //Lunghezze lastra sopra
@@ -41,8 +41,8 @@ Double_t Uy = 0.04;
 Double_t Zu = 1.75;
 
 //Lunghezze lastra sotto
-Double_t Dx = 0.23;
-Double_t Dy = 0.14;
+Double_t Dx = 0.14;
+Double_t Dy = 0.23;
 
 
 //Posizione del centro della lastra sotto rispetto a quella sopra
@@ -55,24 +55,23 @@ Double_t M_mu = 0.105;
 
 //Intervallo di energia della simulazione in GeV
 Double_t Emin = M_mu;
-Double_t Emax = M_mu + 0.1 ; 
+Double_t Emax = M_mu + 0.05 ; 
 
 
 //Variabile per simulare la lettura del primo TAC
 Double_t a1=0.0228*1e9, c1=-0.35, s1=0.05, delay1= 30.5 * 1e-9;
 
 //Variabile per simulare la lettura del secondo TAC
-Double_t a2=0.0228*1e9, c2=-0.35, s2=0.05, delay2= 30.5 * 1e-9;
+Double_t a2=0.0200*1e9, c2=-0.322, s2=0.05, delay2= 30.5 * 1e-9;
 
 
 void Montecarlo_general(){
 	//Counter e numero eventi da generare
-	unsigned i=0, N = 1e7;
+	unsigned i=0, N = 1e8;
 	//Counter vari
 	unsigned Missed =0;
 	
 	
-	//histo = new TH1F("histo", "histo", 2500, 0, 2.5);
 	
 	
 	//Variabili dell'evento
@@ -113,7 +112,7 @@ void Montecarlo_general(){
 			Vd = Rx -> Gaus(a2 * Td + c2,s2);
 			
 			// Stampo le variabili generate e la velcità reale
-			fout << "Vs=" << Vs << '\t' << "Vd=" << Vd << '\t' << "Beta=" << beta_mu << endl;
+			fout  << Vs << '\t'  << Vd << '\t'  << beta_mu << endl;
 		}
 		else {Missed ++;}
 	}
