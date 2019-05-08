@@ -65,9 +65,9 @@ Double_t a2=0.0228*1e9, c2=-0.35, s2=0.05, delay2= 30.5 * 1e-9;
 Double_t a1=0.0200*1e9, c1=-0.322, s1=0.05, delay1= 30.5 * 1e-9;
 
 
-void Montecarlo_general(){
+void Montecarlo_confronto(){
 	//Counter e numero eventi da generare
-	unsigned i=0, N = 1e7;
+	unsigned i=0, N = 1e8;
 	//Counter vari
 	unsigned Missed =0;
 	
@@ -75,13 +75,17 @@ void Montecarlo_general(){
 	TH1F* histo_beta = new TH1F("histo_beta","histo_beta", 1000,0,8*1e8);
 	TH1F* histo_TOF = new TH1F("histoTOF","histoTOF", 1000,0,2*1e-8);
 	TH1F* histo_x = new TH1F("histox","histox", 280,-0.005,2.795);
+	
+	TH1F* histo_beta2 = new TH1F("histo_beta2","histo_beta2", 1000,0,8*1e8);
+	TH1F* histo_TOF2 = new TH1F("histoTOF2","histoTOF2", 1000,0,2*1e-8);
+	TH1F* histo_x2 = new TH1F("histox2","histox2", 280,-0.005,2.795);
 	//Variabili dell'evento
 	Double_t Xu=0, Yu=0, Xd=0, Yd=0, C_Theta=0, Phi=0;
 	//Variabile di un evento andato a segno
-	Double_t E=0, beta_mu=0, Ts=0, Td=0, Vs=0, Vd=0;
+	Double_t E=0, beta_mu=0, Ts=0, Td=0, Vs=0, Vd=0, Td2=0, Vd2=0;
 	
 	//Variabile di ricostruzione
-	Double_t Tsr=0, Tdr =0, Xur=0, beta_mur=0;
+	Double_t Tsr=0, Tdr =0,Td2r =0, Xur=0, Xur2 =0, beta_mur=0, beta_mur2=0;
 	
 	
 	//Apro il file su cui salvare
@@ -113,18 +117,26 @@ void Montecarlo_general(){
 			
 			//Genero i TOF
 			Td = sqrt(pow(Zu,2.0) + pow( Xu-Xd, 2.0) + pow( Yu-Yd, 2.0))/beta_mu + delay2 - Xu/beta_s;
-			
 			Vd = Rx -> Gaus(a2 * Td + c2,s2);
 			
+			Td2 = sqrt(pow(Zu,2.0) + pow( Xu-Xd, 2.0) + pow( Yu-Yd, 2.0))/beta_mu + delay1 + Xu/beta_s;
+			Vd2 = Rx -> Gaus(a1 * Td2 + c1,s1);
 			//Ricostruisco
 			Tdr = (Vd-c2)/a2;
 			Tsr = (Vs-c1)/a1;
+			Td2r = (Vd2 - c1)/a1;
+
 			Xur = (Ux-(Tsr - delay1)*beta_s)/2;
+			Xur2 = (Td2r - Tdr - delay1 +delay2)*beta_s/2;
 			beta_mur = sqrt(pow(Zu,2.0) + pow( Xur-Dcx, 2.0))/(Tdr -delay2 + Xur/beta_s);
+			beta_mur2 = sqrt(pow(Zu,2.0) + pow( Xur2-Dcx, 2.0))/(Tdr -delay2 + Xur2/beta_s);
 			
 			histo_beta -> Fill(beta_mur);
 			histo_TOF -> Fill(Tdr -delay2 + Xur/beta_s);
 			histo_x -> Fill(Xur);
+			histo_beta2 -> Fill(beta_mur2);
+			histo_TOF2 -> Fill(Tdr -delay2 + Xur2/beta_s);
+			histo_x2 -> Fill(Xur2);
 			// Stampo le variabili generate e la velcità reale
 			//fout  << Vs << '\t'  << Vd << '\t'  << beta_mu << endl;
 		}
@@ -135,26 +147,20 @@ void Montecarlo_general(){
 	TCanvas *c_beta = new TCanvas("c_beta","c_beta",1);  	 
 	c_beta -> cd();
 	histo_beta -> Draw();
-	
+	histo_beta2 -> Draw("same");
+	histo_beta2 -> SetLineColor(2);
 	
 	TCanvas *c_TOF = new TCanvas("c_TOF","c_TOF",2);  	 
 	c_TOF -> cd();
 	histo_TOF -> Draw();
-	
+	histo_TOF2 -> Draw("same");
+	histo_TOF2 -> SetLineColor(2);
 	
 	TCanvas *c_x = new TCanvas("c_x","c_x",3);  	 
 	c_x -> cd();
 	histo_x -> Draw();
+	histo_x2 -> Draw("same");
+	histo_x2 -> SetLineColor(2);
+	
+	cout << histo_beta2 -> GetMean() << '\t' << histo_beta2 -> GetStdDev()<< endl;
 }
-
-
-
-
-
-
-
-
-
-
-
-
