@@ -59,10 +59,10 @@ Double_t Emax = 10 ;
 
 
 //Variabile per simulare la lettura del primo TAC
-Double_t a2=0.0228*1e9, c2=-0.35, s2=0.03, delay2= 30.5 * 1e-9;
+Double_t a2=0.0228*1e9, c2=-0.35, s2=0.065, delay2= 30.5 * 1e-9;
 
 //Variabile per simulare la lettura del secondo TAC
-Double_t a1=0.0200*1e9, c1=-0.322, s1=0.03, delay1= 30.5 * 1e-9;
+Double_t a1=0.0200*1e9, c1=-0.322, s1=0.06, delay1= 30.5 * 1e-9;
 
 
 void Montecarlo_general(){
@@ -73,7 +73,7 @@ void Montecarlo_general(){
 	
 	
 	TH1F* histo_beta = new TH1F("histo_beta","histo_beta", 1000,0,10);
-	TH1F* histo_TOF = new TH1F("histoTOF","histoTOF", 1000,0,2*1e-8);
+	TH1F* histo_TOF = new TH1F("histoTOF","histoTOF", 1000,-2*1e-8,2*1e-8);
 	TH1F* histo_x = new TH1F("histox","histox", 1000,-1,4);
 	//Variabili dell'evento
 	Double_t Xu=0, Yu=0, Xd=0, Yd=0, C_Theta=0, Phi=0;
