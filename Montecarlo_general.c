@@ -55,26 +55,26 @@ Double_t M_mu = 0.105;
 
 //Intervallo di energia della simulazione in GeV
 Double_t Emin = M_mu;
-Double_t Emax = M_mu + 0.05 ; 
+Double_t Emax = 10 ; 
 
 
 //Variabile per simulare la lettura del primo TAC
-Double_t a2=0.0228*1e9, c2=-0.35, s2=0.05, delay2= 30.5 * 1e-9;
+Double_t a2=0.0228*1e9, c2=-0.35, s2=0.03, delay2= 30.5 * 1e-9;
 
 //Variabile per simulare la lettura del secondo TAC
-Double_t a1=0.0200*1e9, c1=-0.322, s1=0.05, delay1= 30.5 * 1e-9;
+Double_t a1=0.0200*1e9, c1=-0.322, s1=0.03, delay1= 30.5 * 1e-9;
 
 
 void Montecarlo_general(){
 	//Counter e numero eventi da generare
-	unsigned i=0, N = 1e7;
+	unsigned i=0, N = 4.35e6;
 	//Counter vari
 	unsigned Missed =0;
 	
 	
-	TH1F* histo_beta = new TH1F("histo_beta","histo_beta", 1000,0,8*1e8);
+	TH1F* histo_beta = new TH1F("histo_beta","histo_beta", 1000,0,10);
 	TH1F* histo_TOF = new TH1F("histoTOF","histoTOF", 1000,0,2*1e-8);
-	TH1F* histo_x = new TH1F("histox","histox", 280,-0.005,2.795);
+	TH1F* histo_x = new TH1F("histox","histox", 1000,-1,4);
 	//Variabili dell'evento
 	Double_t Xu=0, Yu=0, Xd=0, Yd=0, C_Theta=0, Phi=0;
 	//Variabile di un evento andato a segno
@@ -104,7 +104,7 @@ void Montecarlo_general(){
 		Yd = Yu - Zu * TMath::Sin(Phi) * sqrt(1 - pow(C_Theta, 2.0))/C_Theta;
 		if(Dcx - Dx/2 <= Xd && Xd<= Dcx + Dx/2 && Dcy - Dy/2 <= Yd && Yd <= Dcy + Dy/2){
 			//Genero l'energia e la velocità
-			E = 111;//(Rx -> Rndm()) *( Emax - Emin) + Emin;
+			E = (Rx -> Rndm()) *( Emax - Emin) + Emin;
 			beta_mu = sqrt (1 - pow(M_mu/E, 2.0)) * C;
 			
 			//Genero i tempi in lettura nella barra
@@ -122,7 +122,7 @@ void Montecarlo_general(){
 			Xur = (Ux-(Tsr - delay1)*beta_s)/2;
 			beta_mur = sqrt(pow(Zu,2.0) + pow( Xur-Dcx, 2.0))/(Tdr -delay2 + Xur/beta_s);
 			
-			histo_beta -> Fill(beta_mur);
+			histo_beta -> Fill(beta_mur/C);
 			histo_TOF -> Fill(Tdr -delay2 + Xur/beta_s);
 			histo_x -> Fill(Xur);
 			// Stampo le variabili generate e la velcità reale
@@ -145,6 +145,8 @@ void Montecarlo_general(){
 	TCanvas *c_x = new TCanvas("c_x","c_x",3);  	 
 	c_x -> cd();
 	histo_x -> Draw();
+	
+	
 }
 
 
