@@ -73,13 +73,13 @@ void Montecarlo_general(){
 	unsigned Missed =0;
 	
 	
-	TH1F* histo_beta = new TH1F("histo_beta","histo_beta", 1000,0,10);
-	TH1F* histo_TOF = new TH1F("histoTOF","histoTOF", 1000,-8*1e-8,10*1e-8);
-	TH1F* histo_x = new TH1F("histox","histox", 1000,-1,4);
+	TH1F* histo_beta = new TH1F("histo_beta","histo_beta", 401,-0.005,4.005);
+	TH1F* histo_TOF = new TH1F("histoTOF","histoTOF", 251,-5.5*1e-9,2.05*1e-8);
+	TH1F* histo_x = new TH1F("histox","histox", 501,-1.005,4.005);
 	
-	TH1F* histo_beta2 = new TH1F("histo_beta2","histo_beta2", 1000,0,10);
-	TH1F* histo_TOF2 = new TH1F("histoTOF2","histoTOF2", 1000,-8e-8,8*1e-8);
-	TH1F* histo_x2 = new TH1F("histox2","histox2", 1000,-1,4);
+	TH1F* histo_beta2 = new TH1F("histo_beta2","histo_beta2", 401,-0.005,4.005);
+	TH1F* histo_TOF2 = new TH1F("histoTOF2","histoTOF2", 251,-5.5e-9,2.05*1e-8);
+	TH1F* histo_x2 = new TH1F("histox2","histox2", 501,-1.005,4.005);
 	//Variabili dell'evento
 	Double_t Xu=0, Yu=0, Xd=0, Yd=0, C_Theta=0, Phi=0, temp=0;
 	//Variabile di un evento andato a segno
@@ -119,18 +119,23 @@ void Montecarlo_general(){
 			beta_mu = sqrt (1 - pow(M_mu/E, 2.0)) * C;
 			
 			//Genero i tempi in lettura nella barra
-			t1= Rx -> Gaus(Xu/beta_s,2e-9);
-			t2= Rx -> Gaus(-Xu/beta_s,2e-9);
-			t3= Rx -> Gaus(sqrt(pow(Zu,2.0) + pow( Xu-Xd, 2.0) + pow( Yu-Yd, 2.0))/beta_mu,2e-9);
-			Ts =  t2 -t1 ;
+			if (Rx -> Rndm() > 0) { t1= Rx -> Gaus(Xu/beta_s,1.5e-9); }
+			else {t1= Rx -> Gaus(-Xu/beta_s -2e-10,5.06e-9);}
+			
+			if (Rx -> Rndm() > 0) { t2= Rx -> Gaus(-Xu/beta_s,2.4e-9); }
+			else {t2= Rx -> Gaus(Xu/beta_s -2e-10,5.06e-9);}
+			
+			if (Rx -> Rndm() > 0) { t3= Rx -> Gaus(sqrt(pow(Zu,2.0) + pow( Xu-Xd, 2.0) + pow( Yu-Yd, 2.0))/beta_mu,2.2e-9); }
+			else {t3= Rx -> Gaus(sqrt(pow(Zu,2.0) + pow( Xu-Xd, 2.0) + pow( Yu-Yd, 2.0))/beta_mu +1e-9,2.02e-9);}
+			Ts = Rx-> Gaus(t2 -t1,2e-11);
 			
 			//Genero i TOF
-			Td = t3  -t1;
+			Td = Rx-> Gaus( t3  -t1, 2e-11);
 			
-			Td2 = t2  - t3;
+			Td2 = Rx-> Gaus(t2  - t3, 2e-11);
 			//Ricostruisco
 			Xur = -Ts*beta_s/2;
-			Xur2 = -(Td2 + Td )*beta_s/2;
+			Xur2 = -(Td2 + Td)*beta_s/2;
 			beta_mur = sqrt(pow(Zu,2.0) + pow( Xur-Dcx, 2.0))/(Td -Ts/2);
 			beta_mur2 = sqrt(pow(Zu,2.0) + pow( Xur2-Dcx, 2.0))/((Td  - Td2)/2);
 			
@@ -140,6 +145,7 @@ void Montecarlo_general(){
 			histo_beta2 -> Fill(beta_mur2/C);
 			histo_TOF2 -> Fill((Td  - Td2)/2);
 			histo_x2 -> Fill(Xur2);
+
 			// Stampo le variabili generate e la velcità reale
 			//fout  << Vs << '\t'  << Vd << '\t'  << beta_mu << endl;
 		}
@@ -149,15 +155,15 @@ void Montecarlo_general(){
 	//Disegno il tutto
 	TCanvas *c_beta = new TCanvas("c_beta","c_beta",1);  	 
 	c_beta -> cd();
-	histo_beta2 -> Draw();
-	histo_beta -> Draw("same");
+	histo_beta -> Draw();
+	histo_beta2 -> Draw("same");
 	histo_beta2 -> SetLineColor(2);
 	
 	
 	TCanvas *c_TOF = new TCanvas("c_TOF","c_TOF",2);  	 
 	c_TOF -> cd();
-	histo_TOF -> Draw();
-	histo_TOF2 -> Draw("same");
+	histo_TOF2 -> Draw();
+	histo_TOF -> Draw("same");
 	histo_TOF2 -> SetLineColor(2);
 	
 	
